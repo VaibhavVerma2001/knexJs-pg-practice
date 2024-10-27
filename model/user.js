@@ -38,7 +38,7 @@ const updateUserRaw = async (id, { name, email, role, salary }) => {
 
 // UPDATE - Update user by ID (using knex query builder)
 const updateUser = async ({id, body}) => {
-    return await db.db('employee').where({ id }).update(body).returning('*');
+    return db.db('employee').where({ id }).update(body).returning('*');
 };
 
 
