@@ -14,4 +14,65 @@ Steps -
 3 -> npx knex --knexfile db/knexfile.js  migrate:make create_employee_table
 4 -> npx knex --knexfile db/knexfile.js  migrate:latest
 
+// tutorial
 https://chatgpt.com/share/670be00e-7d34-8012-817d-c4393e0cd04a
+// how to get data if data is nested
+https://chatgpt.com/share/674eefd3-b620-8012-a215-b91e32330ee8
+// case sensitivity of sql
+https://chatgpt.com/share/675bd6e5-4be4-8007-a097-1315f2d9763d
+
+
+// If we use raw and use fields without quotes then it transform fields in lowercase like nodeid , bookid, etc...
+// If we use alias in quotes in raw then it will return fields as it is like bookId, nodeId, etc...
+export const getFirstNodeByBookId = async ({ bookId }: { bookId: string }) => {
+  // 1- Using knex + raw
+  // const nodeDetails: any = await cmsDb('book_node')
+  //   .select('book_id as bookID', 'node_id as nodeID', 'id', 'name')
+  //   .where(cmsDb.raw('book_id = ? and parent_id = ?', [bookId, 0]))
+  //   .first();
+
+  // 2- using knex, return fields like bookId,... means as it is
+  // const nodeDetails: any = await cmsDb('book_node')
+  //   .select('book_id as bookID', 'node_id as nodeID', 'id', 'name')
+  //   .where({ book_id: bookId, parent_id: 0 })
+  //   .first();
+
+  // 3- using raw , if using alias in quotes then will not convert in lowercase
+  // const nodeDetails: any = await cmsDb.raw(
+  //   `select book_id as "bookID", node_id as "nodeId", id, name from book_node where book_id = ? and parent_id = ?`,
+  //   [bookId,0]
+  // );
+
+  // 4 - using raw , if not using alias in quotes then will convert in lowercase like nodeid, bookid
+  const nodeDetails: any = await cmsDb.raw(
+    `select book_id as bookID, node_id as nodeId, id, name from book_node where book_id = ? and parent_id = ?`,
+    [bookId,0]
+  );
+
+  // Transform if data came in lower case by using raw and without using quotes
+  // const data = {
+  //   nodeId : nodeDetails.rows[0].nodeid,
+  //   bookId : nodeDetails.rows[0].bookid,
+  //   name : nodeDetails.rows[0].name,
+  //   id : nodeDetails.rows[0].id,
+  // }
+
+  // console.log(data);
+
+  // 5- use select in knex and  other using raw
+  // const nodeDetails: any = await cmsDb
+  //   .select('book_id as bookID', 'node_id as nodeID', 'id', 'name')
+  //   .from(cmsDb.raw('book_node where book_id = ? and parent_id = ?', [bookId, 0]))
+  //   .first();
+
+  console.log(nodeDetails);
+
+  if (nodeDetails.rows[0]) {
+    return { ok: true, data: nodeDetails.rows[0] };
+  }
+
+  return {
+    ok: false,
+    err: 'Book Node Not Found',
+  };
+};
