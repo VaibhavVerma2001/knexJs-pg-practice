@@ -24,6 +24,7 @@ https://chatgpt.com/share/675bd6e5-4be4-8007-a097-1315f2d9763d
 
 // If we use raw and use fields without quotes then it transform fields in lowercase like nodeid , bookid, etc...
 // If we use alias in quotes in raw then it will return fields as it is like bookId, nodeId, etc...
+// In knex js there is no issue of lowercase, it returns fields as it is
 export const getFirstNodeByBookId = async ({ bookId }: { bookId: string }) => {
   // 1- Using knex + raw
   // const nodeDetails: any = await cmsDb('book_node')
